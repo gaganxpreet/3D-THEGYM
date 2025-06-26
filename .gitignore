@@ -36,3 +36,15 @@ next-env.d.ts
 # IDE
 .idea
 .vscode
+
+# Large media files
+*.mov
+*.mp4
+*.MOV
+*.MP4
+*.avi
+*.AVI
+*.wmv
+*.WMV
+*.flv
+*.FLV
