@@ -2,7 +2,54 @@
 
 import { useState, useEffect } from 'react'
 import { FiSearch, FiPlus, FiTrash2, FiBarChart2, FiPieChart, FiCalendar, FiClock } from 'react-icons/fi'
-import { useFoodSearch } from '@/hooks/useFoodSearch'
+import { useFoodSearch } from '@/hooks/usefoodsearch'
+
+// Define FoodItem interface
+interface FoodItem {
+  id: number;
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  serving: string;
+  source?: string;
+  brand?: string;
+  fiber?: number;
+  sugars?: number;
+  saturatedFat?: number;
+  monounsaturatedFat?: number;
+  polyunsaturatedFat?: number;
+  transFat?: number;
+  vitaminA?: number;
+  vitaminC?: number;
+  vitaminD?: number;
+  vitaminE?: number;
+  vitaminK?: number;
+  vitaminB1?: number;
+  vitaminB2?: number;
+  vitaminB3?: number;
+  vitaminB5?: number;
+  vitaminB6?: number;
+  vitaminB9?: number;
+  vitaminB12?: number;
+  calcium?: number;
+  iron?: number;
+  magnesium?: number;
+  phosphorus?: number;
+  potassium?: number;
+  sodium?: number;
+  zinc?: number;
+  copper?: number;
+  manganese?: number;
+  selenium?: number;
+  cholesterol?: number;
+  caffeine?: number;
+  alcohol?: number;
+  water?: number;
+  aminoAcids?: any;
+  fattyAcids?: any;
+}
 
 // Sample food database with enhanced nutrition information
 const foodDatabase = [
@@ -388,9 +435,9 @@ export default function CalorieCounterPage() {
   } = useFoodSearch();
   
   const [selectedDate, setSelectedDate] = useState('');
-  const [meals, setMeals] = useState([]);
+  const [meals, setMeals] = useState<any[]>([]);
   const [showAddFoodModal, setShowAddFoodModal] = useState(false);
-  const [selectedFood, setSelectedFood] = useState(null);
+  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [selectedMealType, setSelectedMealType] = useState('Breakfast');
   const [servingSize, setServingSize] = useState(1);
   const [isAddingFood, setIsAddingFood] = useState(false);
@@ -487,7 +534,7 @@ export default function CalorieCounterPage() {
   }, [macroRatios]);
 
   // Handle search input change
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
     if (query.length > 2) {
@@ -498,7 +545,7 @@ export default function CalorieCounterPage() {
   };
 
   // Select a food item
-  const selectFood = (food) => {
+  const selectFood = (food: FoodItem) => {
     console.log('Selected food:', food);
     setSelectedFood(food);
     setServingSize(1);
@@ -511,7 +558,7 @@ export default function CalorieCounterPage() {
     setIsAddingFood(true);
     
     // Helper function to calculate adjusted nutrient values
-    const calculateAdjustedValue = (value) => {
+    const calculateAdjustedValue = (value: number | undefined) => {
       return value !== undefined ? Math.round((value * servingSize) * 10) / 10 : undefined;
     };
     
@@ -640,12 +687,12 @@ export default function CalorieCounterPage() {
   };
 
   // Remove food from meal
-  const removeFood = (foodId) => {
+  const removeFood = (foodId: number) => {
     setMeals(prevMeals => prevMeals.filter(meal => meal.id !== foodId));
   };
 
   // Get meals for a specific date
-  const getMealsForDate = (date) => {
+  const getMealsForDate = (date: string) => {
     return meals.filter(meal => meal.date === date);
   };
 

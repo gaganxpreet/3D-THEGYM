@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactLenis } from '@studio-freight/react-lenis';
+import { ReactLenis } from 'lenis/react';
 import React, { forwardRef } from 'react';
 
 const StickyScroll = forwardRef<HTMLElement, React.HTMLProps<HTMLElement>>((props, ref) => {
