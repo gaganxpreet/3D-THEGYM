@@ -1,4 +1,4 @@
-# GymSphere - A Comprehensive Fitness Partner
+# 3D THEGYM - A Comprehensive Fitness Partner
 
 A full-stack application for fitness tracking, nutrition management, and workout planning. This project combines calorie counting, workout AI, fitness assessment, and more to provide a complete fitness solution.
 
