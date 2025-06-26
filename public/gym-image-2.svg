@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16213e" />
+      <stop offset="100%" stop-color="#0f3460" />
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg-gradient)" />
+  
+  <!-- Gym equipment and elements -->
+  <!-- Treadmill -->
+  <g transform="translate(100, 250)">
+    <rect x="0" y="0" width="200" height="10" fill="#e6e6e6" />
+    <rect x="0" y="10" width="200" height="50" fill="#2d2d2d" />
+    <rect x="20" y="-80" width="160" height="80" fill="#4a4a4a" />
+    <circle cx="50" cy="-50" r="10" fill="#e6e6e6" />
+    <circle cx="80" cy="-50" r="10" fill="#e6e6e6" />
+    <rect x="110" y="-60" width="50" height="20" rx="5" fill="#c02739" />
+  </g>
+  
+  <!-- Exercise bike -->
+  <g transform="translate(500, 200)">
+    <circle cx="50" cy="100" r="40" stroke="#e6e6e6" stroke-width="5" fill="none" />
+    <circle cx="50" cy="100" r="5" fill="#e6e6e6" />
+    <rect x="45" y="20" width="10" height="80" fill="#e6e6e6" />
+    <rect x="30" y="20" width="40" height="10" rx="5" fill="#e6e6e6" />
+    <rect x="20" y="100" width="30" height="5" fill="#e6e6e6" />
+    <rect x="50" y="100" width="30" height="5" fill="#e6e6e6" />
+  </g>
+  
+  <!-- Person silhouette -->
+  <g transform="translate(350, 150)" fill="#ffffff" opacity="0.7">
+    <!-- Head -->
+    <circle cx="0" cy="0" r="20" />
+    <!-- Body -->
+    <rect x="-10" y="20" width="20" height="60" rx="10" />
+    <!-- Arms -->
+    <rect x="-40" y="30" width="30" height="10" rx="5" />
+    <rect x="10" y="30" width="30" height="10" rx="5" />
+    <!-- Legs -->
+    <rect x="-15" y="80" width="10" height="50" rx="5" />
+    <rect x="5" y="80" width="10" height="50" rx="5" />
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="200" cy="100" r="80" fill="#c02739" opacity="0.1" filter="url(#blur)" />
+  <circle cx="600" cy="300" r="100" fill="#f9a826" opacity="0.1" filter="url(#blur)" />
+  
+  <!-- Text -->
+  <text x="400" y="80" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#ffffff" text-anchor="middle">CARDIO TRAINING</text>
+  <text x="400" y="120" font-family="Arial, sans-serif" font-size="20" fill="#f9a826" text-anchor="middle">BOOST YOUR ENDURANCE</text>
+</svg>

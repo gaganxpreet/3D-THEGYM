@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f3460" />
+      <stop offset="100%" stop-color="#1a1a2e" />
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
+    </filter>
+    <linearGradient id="mat-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c02739" />
+      <stop offset="100%" stop-color="#950740" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg-gradient)" />
+  
+  <!-- Yoga/Stretching elements -->
+  <!-- Yoga mat -->
+  <rect x="200" y="250" width="400" height="150" rx="10" fill="url(#mat-gradient)" opacity="0.7" />
+  
+  <!-- Person in yoga pose -->
+  <g transform="translate(400, 250)" fill="#ffffff" opacity="0.8">
+    <!-- Head -->
+    <circle cx="0" cy="0" r="20" />
+    
+    <!-- Torso -->
+    <path d="M -10,20 C -15,50 15,50 10,20" stroke="#ffffff" stroke-width="15" fill="none" />
+    
+    <!-- Arms in stretch position -->
+    <path d="M -10,30 C -50,0 -60,40 -80,30" stroke="#ffffff" stroke-width="8" fill="none" />
+    <path d="M 10,30 C 50,0 60,40 80,30" stroke="#ffffff" stroke-width="8" fill="none" />
+    
+    <!-- Legs in lotus position -->
+    <path d="M -5,60 C -40,90 0,120 40,90" stroke="#ffffff" stroke-width="10" fill="none" />
+    <path d="M 5,60 C 40,90 0,120 -40,90" stroke="#ffffff" stroke-width="10" fill="none" />
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="150" cy="150" r="70" fill="#f9a826" opacity="0.1" filter="url(#blur)" />
+  <circle cx="650" cy="200" r="90" fill="#c02739" opacity="0.1" filter="url(#blur)" />
+  
+  <!-- Meditation symbols -->
+  <g transform="translate(200, 150)" opacity="0.2">
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#ffffff" stroke-width="2" />
+    <circle cx="0" cy="0" r="40" fill="none" stroke="#ffffff" stroke-width="1" />
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#ffffff" stroke-width="0.5" />
+  </g>
+  
+  <g transform="translate(600, 350)" opacity="0.2">
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#ffffff" stroke-width="2" />
+    <circle cx="0" cy="0" r="40" fill="none" stroke="#ffffff" stroke-width="1" />
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#ffffff" stroke-width="0.5" />
+  </g>
+  
+  <!-- Text -->
+  <text x="400" y="80" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#ffffff" text-anchor="middle">MIND & BODY</text>
+  <text x="400" y="120" font-family="Arial, sans-serif" font-size="20" fill="#f9a826" text-anchor="middle">BALANCE YOUR WELLNESS</text>
+</svg>

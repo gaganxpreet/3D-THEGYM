@@ -1,0 +1,325 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@700&family=Roboto+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #121212;
+  --card-background: #1E1E1E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --primary: #D5A021;
+  --secondary: #3D5A80;
+  --success: #4D9078;
+  --warning: #8A4FFF;
+}
+
+@layer base {
+  body {
+    @apply bg-dark text-white font-inter;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat font-bold;
+  }
+
+  button {
+    @apply font-inter font-medium;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply container mx-auto px-4 md:px-6 lg:px-8;
+  }
+
+  /* Premium button styles */
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-primary/30 relative overflow-hidden border border-primary/50;
+  }
+
+  .btn-primary::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-primary/0 via-white/10 to-primary/0 opacity-0 transition-opacity duration-300;
+  }
+
+  .btn-primary:hover::before {
+    @apply opacity-100;
+  }
+
+  .btn-secondary {
+    @apply bg-dark hover:bg-dark/80 text-white px-6 py-3 rounded-md font-medium transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-primary/20 relative overflow-hidden border border-primary/30;
+  }
+
+  .btn-secondary::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-primary/0 via-white/5 to-primary/0 opacity-0 transition-opacity duration-300;
+  }
+
+  .btn-secondary:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Add container class for WorkoutAI */
+  .container {
+    @apply max-w-7xl mx-auto;
+  }
+
+  /* Premium card styles */
+  .card {
+    @apply bg-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm;
+  }
+  
+  /* Add premium card hover effect */
+  .card:hover {
+    @apply shadow-primary/10;
+  }
+
+  .nav-link {
+    @apply text-white hover:text-primary transition-colors duration-300 relative font-medium;
+  }
+  
+  .nav-link::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50 transition-all duration-300;
+  }
+  
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold mb-6 text-white relative inline-block;
+  }
+  
+  .section-title::after {
+    content: '';
+    @apply absolute -bottom-2 left-0 w-1/3 h-1 bg-primary/70 rounded-full;
+  }
+
+  .section-subtitle {
+    @apply text-xl text-text-secondary mb-8 max-w-3xl mx-auto leading-relaxed;
+  }
+
+  .glassmorphism {
+    @apply bg-opacity-5 backdrop-filter backdrop-blur-md bg-white border border-primary/20 shadow-lg;
+  }
+
+  .aurora-bg {
+    @apply relative overflow-hidden;
+  }
+
+  .aurora-bg::before {
+    content: '';
+    @apply absolute -inset-[100px] bg-gradient-to-r from-primary/20 via-secondary/20 to-warning/20 blur-3xl opacity-30 animate-pulse;
+  }
+
+  /* Trae.ai inspired styles */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-warning;
+  }
+
+  .text-changer {
+    @apply relative overflow-hidden;
+  }
+
+  .text-changer span {
+    @apply inline-block transition-all duration-300;
+  }
+
+  .blur-card {
+    @apply backdrop-blur-lg bg-dark/30 border border-white/10 rounded-xl p-6 transition-all duration-300;
+  }
+
+  .glow-effect {
+    @apply relative;
+  }
+
+  .glow-effect::before {
+    content: '';
+    @apply absolute -inset-1 rounded-full blur-md opacity-50 transition-opacity duration-300;
+  }
+
+  .glow-primary::before {
+    @apply bg-primary/30;
+  }
+
+  .glow-secondary::before {
+    @apply bg-secondary/30;
+  }
+
+  .glow-warning::before {
+    @apply bg-warning/30;
+  }
+
+  .glow-success::before {
+    @apply bg-success/30;
+  }
+}
+
+/* Animation classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3), 0 5px 15px -5px rgba(213, 160, 33, 0.1);
+}
+
+.hover-glow-primary:hover {
+  box-shadow: 0 0 20px rgba(213, 160, 33, 0.4);
+}
+
+.hover-glow-secondary:hover {
+  box-shadow: 0 0 20px rgba(61, 90, 128, 0.4);
+}
+
+.hover-glow-success:hover {
+  box-shadow: 0 0 20px rgba(77, 144, 120, 0.4);
+}
+
+.hover-glow-warning:hover {
+  box-shadow: 0 0 20px rgba(138, 79, 255, 0.4);
+}
+
+/* New animations for Trae.ai style */
+.animate-text-fade {
+  animation: textFade 0.5s ease-in-out;
+}
+
+@keyframes textFade {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientMove 8s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px -5px var(--primary);
+  }
+  to {
+    box-shadow: 0 0 25px 5px var(--primary);
+  }
+}
+
+.animate-scale {
+  animation: scale 4s ease-in-out infinite alternate;
+}
+
+@keyframes scale {
+  from {
+    transform: scale(0.95);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 4s ease-in-out infinite;
+}
+
+@keyframes bounceSlow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes text {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 200px;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes textReverse {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: -200px;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* Blob animation for gradient cards */
+@keyframes blob { 
+  0%, 100% { transform: translateY(10px); } 
+  50% { transform: translate(-10px); } 
+} 
+
+.animate-blob { 
+  animation: blob 2s ease-in-out infinite; 
+} 
+
+.animation-delay-1000 { 
+  animation-delay: -1s; 
+}

@@ -1,0 +1,20 @@
+# Build output
+.next/
+out/
+build/
+
+# Node modules
+node_modules/
+
+# Coverage reports
+coverage/
+
+# Generated files
+public/
+
+# Package files
+package-lock.json
+yarn.lock
+
+# Markdown files
+*.md
