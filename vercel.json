@@ -2,7 +2,12 @@
   "version": 2,
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_GEMINI_API_KEY": "${NEXT_PUBLIC_GEMINI_API_KEY}",
+    "NEXT_PUBLIC_USDA_API_KEY": "${NEXT_PUBLIC_USDA_API_KEY}",
+    "NEXT_PUBLIC_YOUTUBE_API_KEY": "${NEXT_PUBLIC_YOUTUBE_API_KEY}"
+  }
 }
