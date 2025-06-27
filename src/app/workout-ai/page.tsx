@@ -20,14 +20,27 @@ import {
   Users,
   TrendingUp
 } from 'lucide-react'
-import { generateWorkoutPDF, shareWorkout, saveWorkout, getSavedWorkouts } from '@/utils/pdf-generator'
+import { generateWorkoutPDF, shareWorkout as shareWorkoutUtil, saveWorkout, getSavedWorkouts } from '@/utils/pdf-generator'
 
 // Gemini API Configuration (you'll need to install @google/generative-ai)
 // npm install @google/generative-ai
 
 export default function WorkoutAIPage() {
+  // Define FormData interface to allow string indexing
+  interface FormData {
+    fitnessGoal: string;
+    fitnessLevel: string;
+    workoutDuration: string;
+    primaryMuscleGroups: string[];
+    secondaryMuscleGroups: string[];
+    equipment: string[];
+    injuries: string;
+    preferences: string;
+    [key: string]: string | string[];
+  }
+
   // Form States
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fitnessGoal: '',
     fitnessLevel: '',
     workoutDuration: '',
@@ -38,12 +51,34 @@ export default function WorkoutAIPage() {
     preferences: ''
   })
 
+  // Define WorkoutData interface
+  interface WorkoutData {
+    title?: string;
+    workoutName?: string;
+    exercises?: any[];
+    notes?: string;
+    [key: string]: any;
+  }
+  
+  // Type-safe wrapper for shareWorkout
+  const shareWorkout = async (workoutData: WorkoutData): Promise<'copied' | boolean> => {
+    try {
+      // The original function returns either 'copied' or true
+      await shareWorkoutUtil(workoutData)
+      // Since we can't determine the exact return value, we'll assume it was successful
+      return true
+    } catch (error) {
+      console.error('Error sharing workout:', error)
+      return false
+    }
+  }
+
   // UI States
   const [currentStep, setCurrentStep] = useState(1)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [generatedWorkout, setGeneratedWorkout] = useState(null)
-  const [validationErrors, setValidationErrors] = useState({})
-  const [showTooltips, setShowTooltips] = useState({})
+  const [generatedWorkout, setGeneratedWorkout] = useState<WorkoutData | null>(null)
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+  const [showTooltips, setShowTooltips] = useState<Record<string, boolean>>({})
   const [isProcessing, setIsProcessing] = useState(false)
   const [notification, setNotification] = useState({ show: false, message: '', type: '' })
   const workoutResultsRef = useRef(null)
@@ -111,7 +146,7 @@ export default function WorkoutAIPage() {
 
   // Validation Rules
   const validateForm = () => {
-    const errors = {}
+    const errors: Record<string, string> = {}
     
     if (!formData.fitnessGoal) errors.fitnessGoal = 'Please select your fitness goal'
     if (!formData.fitnessLevel) errors.fitnessLevel = 'Please select your fitness level'
@@ -124,7 +159,7 @@ export default function WorkoutAIPage() {
   }
 
   // Handle form field changes
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -140,13 +175,19 @@ export default function WorkoutAIPage() {
   }
 
   // Handle array field changes (muscle groups, equipment)
-  const toggleArrayField = (field, item) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].includes(item)
-        ? prev[field].filter(i => i !== item)
-        : [...prev[field], item]
-    }))
+  const toggleArrayField = (field: string, item: string) => {
+    setFormData(prev => {
+      const currentValue = prev[field];
+      if (Array.isArray(currentValue)) {
+        return {
+          ...prev,
+          [field]: currentValue.includes(item)
+            ? currentValue.filter((i: string) => i !== item)
+            : [...currentValue, item]
+        };
+      }
+      return prev;
+    })
   }
 
   // Handle saving workout to local storage
@@ -208,7 +249,12 @@ export default function WorkoutAIPage() {
       const url = URL.createObjectURL(pdfBlob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `${workoutToDownload.workoutName.replace(/\s+/g, '-').toLowerCase()}.pdf`
+      const fileName = workoutToDownload.workoutName ? 
+        workoutToDownload.workoutName.replace(/\s+/g, '-').toLowerCase() : 
+        workoutToDownload.title ? 
+          workoutToDownload.title.replace(/\s+/g, '-').toLowerCase() : 
+          'workout'
+      link.download = `${fileName}.pdf`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -259,7 +305,7 @@ export default function WorkoutAIPage() {
           message: 'Workout details copied to clipboard!',
           type: 'success'
         })
-      } else {
+      } else if (result === true) {
         setNotification({
           show: true,
           message: 'Workout shared successfully!',
@@ -393,7 +439,7 @@ const generateAIWorkout = async () => {
       }
       
       // Ensure each main workout exercise has all required fields
-      workoutData.mainWorkout = workoutData.mainWorkout.map(exercise => ({
+      workoutData.mainWorkout = workoutData.mainWorkout.map((exercise: any) => ({
         exercise: exercise.exercise || "Exercise",
         sets: exercise.sets || 3,
         reps: exercise.reps || "10-12",
@@ -433,7 +479,8 @@ const generateAIWorkout = async () => {
     setGeneratedWorkout(workoutData)
   } catch (error) {
     console.error('Error generating workout:', error)
-    alert(`Failed to generate workout: ${error.message}`)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    alert(`Failed to generate workout: ${errorMessage}`)
   } finally {
     setIsGenerating(false)
   }
@@ -441,7 +488,7 @@ const generateAIWorkout = async () => {
 
 
   // Tooltip Component
-  const Tooltip = ({ content, children, field }) => (
+  const Tooltip = ({ content, children, field }: { content: string, children: React.ReactNode, field: string }) => (
     <div className="relative">
       <div
         onMouseEnter={() => setShowTooltips(prev => ({ ...prev, [field]: true }))}
@@ -464,7 +511,7 @@ const generateAIWorkout = async () => {
       
       <div>
         <Tooltip content="Choose your primary fitness objective" field="fitnessGoal">
-          <label className="block text-sm font-medium mb-2 flex items-center">
+          <label className="text-sm font-medium mb-2 flex items-center">
             <Target className="mr-2 w-4 h-4" />
             Fitness Goal *
             <Info className="ml-1 text-gray-400 w-4 h-4" />
@@ -492,7 +539,7 @@ const generateAIWorkout = async () => {
 
       <div>
         <Tooltip content="Select your current fitness experience level" field="fitnessLevel">
-          <label className="block text-sm font-medium mb-2 flex items-center">
+          <label className="text-sm font-medium mb-2 flex items-center">
             <Activity className="mr-2 w-4 h-4" />
             Fitness Level *
             <Info className="ml-1 text-gray-400 w-4 h-4" />
@@ -527,7 +574,7 @@ const generateAIWorkout = async () => {
 
       <div>
         <Tooltip content="How long do you want to work out?" field="workoutDuration">
-          <label className="block text-sm font-medium mb-2 flex items-center">
+          <label className="text-sm font-medium mb-2 flex items-center">
             <Clock className="mr-2 w-4 h-4" />
             Workout Duration *
             <Info className="ml-1 text-gray-400 w-4 h-4" />
@@ -564,7 +611,7 @@ const generateAIWorkout = async () => {
       
       <div>
         <Tooltip content="Select 1-3 primary muscle groups to focus on" field="primaryMuscleGroups">
-          <label className="block text-sm font-medium mb-2 flex items-center">
+          <label className="text-sm font-medium mb-2 flex items-center">
             <Target className="mr-2 w-4 h-4" />
             Primary Focus *
             <span className="ml-1 text-xs text-gray-400">(Select 1-3)</span>
@@ -618,7 +665,7 @@ const generateAIWorkout = async () => {
       
       <div>
         <Tooltip content="Select all equipment you have access to" field="equipment">
-          <label className="block text-sm font-medium mb-2 flex items-center">
+          <label className="text-sm font-medium mb-2 flex items-center">
             <Sliders className="mr-2 w-4 h-4" />
             Available Equipment *
             <Info className="ml-1 text-gray-400 w-4 h-4" />
@@ -724,17 +771,17 @@ const generateAIWorkout = async () => {
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-6 border border-primary/20">
         <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
           <div>
-            <h3 className="text-2xl font-bold">{generatedWorkout.workoutName}</h3>
-            <p className="text-gray-400 mt-2">{generatedWorkout.description}</p>
+            <h3 className="text-2xl font-bold">{generatedWorkout?.workoutName}</h3>
+            <p className="text-gray-400 mt-2">{generatedWorkout?.description}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <span className="px-3 py-1 text-sm rounded-full bg-primary/20 border border-primary/50 flex items-center">
               <Activity className="w-4 h-4 mr-1" />
-              {generatedWorkout.difficulty}
+              {generatedWorkout?.difficulty}
             </span>
             <span className="px-3 py-1 text-sm rounded-full bg-secondary/20 border border-secondary/50 flex items-center">
               <Zap className="w-4 h-4 mr-1" />
-              ~{generatedWorkout.estimatedCalories} cal
+              ~{generatedWorkout?.estimatedCalories} cal
             </span>
             <span className="px-3 py-1 text-sm rounded-full bg-yellow-500/20 border border-yellow-500/50 flex items-center">
               <Clock className="w-4 h-4 mr-1" />
@@ -744,14 +791,14 @@ const generateAIWorkout = async () => {
         </div>
 
         {/* Warmup Section */}
-        {generatedWorkout.warmup && generatedWorkout.warmup.length > 0 && (
+        {generatedWorkout?.warmup && generatedWorkout?.warmup.length > 0 && (
           <div className="mb-6">
             <h4 className="text-lg font-bold mb-3 text-yellow-400 flex items-center">
               <Zap className="mr-2 w-5 h-5" />
               Warm-up
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {generatedWorkout.warmup.map((exercise, index) => (
+              {generatedWorkout?.warmup.map((exercise: any, index: number) => (
                 <div key={index} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-yellow-500/30 transition-colors">
                   <div className="flex justify-between items-center mb-2">
                     {exercise.youtubeVideo ? (
@@ -796,7 +843,7 @@ const generateAIWorkout = async () => {
                 </tr>
               </thead>
               <tbody>
-                {generatedWorkout.mainWorkout.map((exercise, index) => (
+                {generatedWorkout?.mainWorkout?.map((exercise: any, index: number) => (
                   <tr key={index} className="border-b border-gray-800 hover:bg-gray-700/30 transition-colors">
                     <td className="py-4 px-4">
                       <div>
@@ -825,7 +872,7 @@ const generateAIWorkout = async () => {
                     <td className="text-center py-4 px-2 text-gray-300">{exercise.rest}</td>
                     <td className="py-4 px-4">
                       <div className="flex flex-wrap gap-1">
-                        {exercise.targetMuscles?.map((muscle, idx) => (
+                        {exercise.targetMuscles?.map((muscle: string, idx: number) => (
                           <span key={idx} className="px-2 py-1 text-xs rounded-full bg-primary/20 border border-primary/30">
                             {muscle}
                           </span>
@@ -840,14 +887,14 @@ const generateAIWorkout = async () => {
         </div>
 
         {/* Cooldown Section */}
-        {generatedWorkout.cooldown && generatedWorkout.cooldown.length > 0 && (
+        {generatedWorkout?.cooldown && generatedWorkout?.cooldown.length > 0 && (
           <div className="mb-6">
             <h4 className="text-lg font-bold mb-3 text-blue-400 flex items-center">
               <Heart className="mr-2 w-5 h-5" />
               Cool-down
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {generatedWorkout.cooldown.map((exercise, index) => (
+              {generatedWorkout?.cooldown.map((exercise: any, index: number) => (
                 <div key={index} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-blue-500/30 transition-colors">
                   <div className="flex justify-between items-center mb-2">
                     {exercise.youtubeVideo ? (
@@ -875,19 +922,26 @@ const generateAIWorkout = async () => {
         )}
 
         {/* Notes Section */}
-        {generatedWorkout.notes && generatedWorkout.notes.length > 0 && (
+        {generatedWorkout?.notes && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-5 mb-6">
             <h4 className="font-bold mb-3 text-yellow-400 flex items-center">
               <Info className="mr-2 w-5 h-5" />
               Important Notes:
             </h4>
             <ul className="space-y-2">
-              {generatedWorkout.notes.map((note, index) => (
-                <li key={index} className="text-sm text-gray-300 flex items-start">
+              {Array.isArray(generatedWorkout.notes) ? (
+                generatedWorkout.notes.map((note: string, index: number) => (
+                  <li key={index} className="text-sm text-gray-300 flex items-start">
+                    <span className="text-yellow-400 mr-2 mt-1">•</span>
+                    <span>{note}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-gray-300 flex items-start">
                   <span className="text-yellow-400 mr-2 mt-1">•</span>
-                  <span>{note}</span>
+                  <span>{generatedWorkout.notes}</span>
                 </li>
-              ))}
+              )}
             </ul>
           </div>
         )}
@@ -912,7 +966,7 @@ const generateAIWorkout = async () => {
             <div className="bg-gray-700/50 rounded-lg p-3 flex flex-col items-center justify-center text-center">
               <Activity className="w-6 h-6 text-primary mb-2" />
               <span className="text-sm text-gray-400">Intensity</span>
-              <span className="font-bold">{generatedWorkout.difficulty}</span>
+              <span className="font-bold">{generatedWorkout?.difficulty}</span>
             </div>
           </div>
         </div>

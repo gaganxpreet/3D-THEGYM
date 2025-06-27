@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FiSearch, FiPlus, FiTrash2, FiBarChart2, FiPieChart, FiCalendar, FiClock } from 'react-icons/fi'
 import { useFoodSearch } from '@/hooks/usefoodsearch'
 
 // Define FoodItem interface
 interface FoodItem {
   id: number;
+  fdcId?: number | string;
   name: string;
   calories: number;
   protein: number;
@@ -49,6 +50,47 @@ interface FoodItem {
   water?: number;
   aminoAcids?: any;
   fattyAcids?: any;
+  // For meal items
+  date?: string;
+  mealType?: string;
+  servingSize?: number;
+  servingUnit?: string;
+  totalCalories?: number;
+  totalProtein?: number;
+  totalCarbs?: number;
+  totalFat?: number;
+  totalFiber?: number;
+  totalSugars?: number;
+  totalSaturatedFat?: number;
+  totalMonounsaturatedFat?: number;
+  totalPolyunsaturatedFat?: number;
+  totalTransFat?: number;
+  totalVitaminA?: number;
+  totalVitaminC?: number;
+  totalVitaminD?: number;
+  totalVitaminE?: number;
+  totalVitaminK?: number;
+  totalVitaminB1?: number;
+  totalVitaminB2?: number;
+  totalVitaminB3?: number;
+  totalVitaminB5?: number;
+  totalVitaminB6?: number;
+  totalVitaminB9?: number;
+  totalVitaminB12?: number;
+  totalCalcium?: number;
+  totalIron?: number;
+  totalMagnesium?: number;
+  totalPhosphorus?: number;
+  totalPotassium?: number;
+  totalSodium?: number;
+  totalZinc?: number;
+  totalCopper?: number;
+  totalManganese?: number;
+  totalSelenium?: number;
+  totalCholesterol?: number;
+  totalCaffeine?: number;
+  totalAlcohol?: number;
+  totalWater?: number;
 }
 
 // Sample food database with enhanced nutrition information
@@ -62,6 +104,7 @@ const foodDatabase = [
     fat: 0.3, 
     serving: '1 medium (182g)', 
     source: 'Local',
+    brand: 'Generic',
     // Detailed macronutrients
     fiber: 4.4,
     sugars: 19,
@@ -108,6 +151,7 @@ const foodDatabase = [
     fat: 0.4, 
     serving: '1 medium (118g)', 
     source: 'Local',
+    brand: 'Generic',
     // Detailed macronutrients
     fiber: 3.1,
     sugars: 14.4,
@@ -154,6 +198,7 @@ const foodDatabase = [
     fat: 3.6, 
     serving: '100g (cooked)', 
     source: 'Local',
+    brand: 'Generic',
     // Detailed macronutrients
     fiber: 0,
     sugars: 0,
@@ -211,6 +256,7 @@ const foodDatabase = [
     fat: 1.8, 
     serving: '1 cup cooked (195g)', 
     source: 'Local',
+    brand: 'Generic',
     // Detailed macronutrients
     fiber: 3.5,
     sugars: 0.7,
@@ -257,6 +303,7 @@ const foodDatabase = [
     fat: 13, 
     serving: '100g (cooked)', 
     source: 'Local',
+    brand: 'Generic',
     // Detailed macronutrients
     fiber: 0,
     sugars: 0,
@@ -310,6 +357,7 @@ const foodDatabase = [
     fat: 5, 
     serving: '1 large (50g)', 
     source: 'Local',
+    brand: 'Generic',
     // Detailed macronutrients
     fiber: 0,
     sugars: 0.6,
@@ -359,62 +407,62 @@ const foodDatabase = [
     }
   },
   // Add more foods with enhanced nutrition data as needed
-  { id: 7, name: 'Avocado', calories: 240, protein: 3, carbs: 12, fat: 22, serving: '1 medium (150g)', source: 'Local' },
-  { id: 8, name: 'Greek Yogurt', calories: 100, protein: 17, carbs: 6, fat: 0.4, serving: '170g (container)', source: 'Local' },
-  { id: 9, name: 'Oatmeal', calories: 150, protein: 5, carbs: 27, fat: 2.5, serving: '1 cup cooked (234g)', source: 'Local' },
-  { id: 10, name: 'Almonds', calories: 164, protein: 6, carbs: 6, fat: 14, serving: '28g (1 oz)', source: 'Local' },
-  { id: 11, name: 'Broccoli', calories: 55, protein: 3.7, carbs: 11, fat: 0.6, serving: '1 cup (91g)', source: 'Local' },
-  { id: 12, name: 'Sweet Potato', calories: 180, protein: 4, carbs: 41, fat: 0.1, serving: '1 medium (151g)', source: 'Local' },
-  { id: 13, name: 'Quinoa', calories: 222, protein: 8, carbs: 39, fat: 3.6, serving: '1 cup cooked (185g)', source: 'Local' },
-  { id: 14, name: 'Spinach', calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4, serving: '100g (raw)', source: 'Local' },
+  { id: 7, name: 'Avocado', calories: 240, protein: 3, carbs: 12, fat: 22, serving: '1 medium (150g)', source: 'Local', brand: 'Generic' },
+  { id: 8, name: 'Greek Yogurt', calories: 100, protein: 17, carbs: 6, fat: 0.4, serving: '170g (container)', source: 'Local', brand: 'Generic' },
+  { id: 9, name: 'Oatmeal', calories: 150, protein: 5, carbs: 27, fat: 2.5, serving: '1 cup cooked (234g)', source: 'Local', brand: 'Generic' },
+  { id: 10, name: 'Almonds', calories: 164, protein: 6, carbs: 6, fat: 14, serving: '28g (1 oz)', source: 'Local', brand: 'Generic' },
+  { id: 11, name: 'Broccoli', calories: 55, protein: 3.7, carbs: 11, fat: 0.6, serving: '1 cup (91g)', source: 'Local', brand: 'Generic' },
+  { id: 12, name: 'Sweet Potato', calories: 180, protein: 4, carbs: 41, fat: 0.1, serving: '1 medium (151g)', source: 'Local', brand: 'Generic' },
+  { id: 13, name: 'Quinoa', calories: 222, protein: 8, carbs: 39, fat: 3.6, serving: '1 cup cooked (185g)', source: 'Local', brand: 'Generic' },
+  { id: 14, name: 'Spinach', calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4, serving: '100g (raw)', source: 'Local', brand: 'Generic' },
   // Fruits
-  { id: 16, name: 'Orange', calories: 62, protein: 1.2, carbs: 15.4, fat: 0.2, serving: '1 medium (154g)', source: 'Local' },
-  { id: 17, name: 'Strawberries', calories: 49, protein: 1, carbs: 12, fat: 0.5, serving: '1 cup (152g)', source: 'Local' },
-  { id: 18, name: 'Blueberries', calories: 84, protein: 1.1, carbs: 21, fat: 0.5, serving: '1 cup (148g)', source: 'Local' },
-  { id: 19, name: 'Grapes', calories: 104, protein: 1.1, carbs: 27, fat: 0.2, serving: '1 cup (151g)', source: 'Local' },
-  { id: 20, name: 'Pineapple', calories: 82, protein: 0.9, carbs: 22, fat: 0.2, serving: '1 cup chunks (165g)', source: 'Local' },
-  { id: 21, name: 'Mango', calories: 107, protein: 1.4, carbs: 28, fat: 0.4, serving: '1 cup sliced (165g)', source: 'Local' },
-  { id: 22, name: 'Watermelon', calories: 46, protein: 0.9, carbs: 12, fat: 0.2, serving: '1 cup (152g)', source: 'Local' },
+  { id: 16, name: 'Orange', calories: 62, protein: 1.2, carbs: 15.4, fat: 0.2, serving: '1 medium (154g)', source: 'Local', brand: 'Generic' },
+  { id: 17, name: 'Strawberries', calories: 49, protein: 1, carbs: 12, fat: 0.5, serving: '1 cup (152g)', source: 'Local', brand: 'Generic' },
+  { id: 18, name: 'Blueberries', calories: 84, protein: 1.1, carbs: 21, fat: 0.5, serving: '1 cup (148g)', source: 'Local', brand: 'Generic' },
+  { id: 19, name: 'Grapes', calories: 104, protein: 1.1, carbs: 27, fat: 0.2, serving: '1 cup (151g)', source: 'Local', brand: 'Generic' },
+  { id: 20, name: 'Pineapple', calories: 82, protein: 0.9, carbs: 22, fat: 0.2, serving: '1 cup chunks (165g)', source: 'Local', brand: 'Generic' },
+  { id: 21, name: 'Mango', calories: 107, protein: 1.4, carbs: 28, fat: 0.4, serving: '1 cup sliced (165g)', source: 'Local', brand: 'Generic' },
+  { id: 22, name: 'Watermelon', calories: 46, protein: 0.9, carbs: 12, fat: 0.2, serving: '1 cup (152g)', source: 'Local', brand: 'Generic' },
 
 // Vegetables
-  { id: 23, name: 'Carrots', calories: 41, protein: 0.9, carbs: 10, fat: 0.2, serving: '1 cup chopped (128g)', source: 'Local' },
-  { id: 24, name: 'Bell Pepper', calories: 30, protein: 1, carbs: 7, fat: 0.3, serving: '1 cup chopped (149g)', source: 'Local' },
-  { id: 25, name: 'Cucumber', calories: 16, protein: 0.7, carbs: 4, fat: 0.1, serving: '1 cup sliced (119g)', source: 'Local' },
-  { id: 26, name: 'Tomato', calories: 32, protein: 1.6, carbs: 7, fat: 0.4, serving: '1 medium (123g)', source: 'Local' },
-  { id: 27, name: 'Lettuce', calories: 10, protein: 0.9, carbs: 2, fat: 0.2, serving: '1 cup shredded (47g)', source: 'Local' },
-  { id: 28, name: 'Cauliflower', calories: 25, protein: 2, carbs: 5, fat: 0.3, serving: '1 cup chopped (107g)', source: 'Local' },
-  { id: 29, name: 'Zucchini', calories: 20, protein: 1.5, carbs: 4, fat: 0.4, serving: '1 cup sliced (113g)', source: 'Local' },
+  { id: 23, name: 'Carrots', calories: 41, protein: 0.9, carbs: 10, fat: 0.2, serving: '1 cup chopped (128g)', source: 'Local', brand: 'Generic' },
+  { id: 24, name: 'Bell Pepper', calories: 30, protein: 1, carbs: 7, fat: 0.3, serving: '1 cup chopped (149g)', source: 'Local', brand: 'Generic' },
+  { id: 25, name: 'Cucumber', calories: 16, protein: 0.7, carbs: 4, fat: 0.1, serving: '1 cup sliced (119g)', source: 'Local', brand: 'Generic' },
+  { id: 26, name: 'Tomato', calories: 32, protein: 1.6, carbs: 7, fat: 0.4, serving: '1 medium (123g)', source: 'Local', brand: 'Generic' },
+  { id: 27, name: 'Lettuce', calories: 10, protein: 0.9, carbs: 2, fat: 0.2, serving: '1 cup shredded (47g)', source: 'Local', brand: 'Generic' },
+  { id: 28, name: 'Cauliflower', calories: 25, protein: 2, carbs: 5, fat: 0.3, serving: '1 cup chopped (107g)', source: 'Local', brand: 'Generic' },
+  { id: 29, name: 'Zucchini', calories: 20, protein: 1.5, carbs: 4, fat: 0.4, serving: '1 cup sliced (113g)', source: 'Local', brand: 'Generic' },
 
 // Proteins
-  { id: 30, name: 'Tuna', calories: 179, protein: 39, carbs: 0, fat: 1.3, serving: '100g (canned in water)', source: 'Local' },
-  { id: 31, name: 'Turkey Breast', calories: 135, protein: 30, carbs: 0, fat: 1, serving: '100g (cooked)', source: 'Local' },
-  { id: 32, name: 'Cod Fish', calories: 105, protein: 23, carbs: 0, fat: 0.9, serving: '100g (cooked)', source: 'Local' },
-  { id: 33, name: 'Tofu', calories: 94, protein: 10, carbs: 2.3, fat: 6, serving: '100g (firm)', source: 'Local' },
-  { id: 34, name: 'Lentils', calories: 230, protein: 18, carbs: 40, fat: 0.8, serving: '1 cup cooked (198g)', source: 'Local' },
-  { id: 35, name: 'Black Beans', calories: 227, protein: 15, carbs: 41, fat: 0.9, serving: '1 cup cooked (172g)', source: 'Local' },
-  { id: 36, name: 'Cottage Cheese', calories: 98, protein: 11, carbs: 3.4, fat: 4.3, serving: '1/2 cup (113g)', source: 'Local' },
+  { id: 30, name: 'Tuna', calories: 179, protein: 39, carbs: 0, fat: 1.3, serving: '100g (canned in water)', source: 'Local', brand: 'Generic' },
+  { id: 31, name: 'Turkey Breast', calories: 135, protein: 30, carbs: 0, fat: 1, serving: '100g (cooked)', source: 'Local', brand: 'Generic' },
+  { id: 32, name: 'Cod Fish', calories: 105, protein: 23, carbs: 0, fat: 0.9, serving: '100g (cooked)', source: 'Local', brand: 'Generic' },
+  { id: 33, name: 'Tofu', calories: 94, protein: 10, carbs: 2.3, fat: 6, serving: '100g (firm)', source: 'Local', brand: 'Generic' },
+  { id: 34, name: 'Lentils', calories: 230, protein: 18, carbs: 40, fat: 0.8, serving: '1 cup cooked (198g)', source: 'Local', brand: 'Generic' },
+  { id: 35, name: 'Black Beans', calories: 227, protein: 15, carbs: 41, fat: 0.9, serving: '1 cup cooked (172g)', source: 'Local', brand: 'Generic' },
+  { id: 36, name: 'Cottage Cheese', calories: 98, protein: 11, carbs: 3.4, fat: 4.3, serving: '1/2 cup (113g)', source: 'Local', brand: 'Generic' },
 
 // Grains & Carbs
-  { id: 37, name: 'White Rice', calories: 205, protein: 4.3, carbs: 45, fat: 0.4, serving: '1 cup cooked (158g)', source: 'Local' },
-  { id: 38, name: 'Whole Wheat Bread', calories: 81, protein: 4, carbs: 14, fat: 1.1, serving: '1 slice (28g)', source: 'Local' },
-  { id: 39, name: 'Pasta', calories: 220, protein: 8, carbs: 44, fat: 1.1, serving: '1 cup cooked (140g)', source: 'Local' },
-  { id: 40, name: 'Barley', calories: 193, protein: 3.5, carbs: 44, fat: 0.7, serving: '1 cup cooked (157g)', source: 'Local' },
+  { id: 37, name: 'White Rice', calories: 205, protein: 4.3, carbs: 45, fat: 0.4, serving: '1 cup cooked (158g)', source: 'Local', brand: 'Generic' },
+  { id: 38, name: 'Whole Wheat Bread', calories: 81, protein: 4, carbs: 14, fat: 1.1, serving: '1 slice (28g)', source: 'Local', brand: 'Generic' },
+  { id: 39, name: 'Pasta', calories: 220, protein: 8, carbs: 44, fat: 1.1, serving: '1 cup cooked (140g)', source: 'Local', brand: 'Generic' },
+  { id: 40, name: 'Barley', calories: 193, protein: 3.5, carbs: 44, fat: 0.7, serving: '1 cup cooked (157g)', source: 'Local', brand: 'Generic' },
 
 // Nuts & Seeds
-  { id: 41, name: 'Walnuts', calories: 185, protein: 4.3, carbs: 3.9, fat: 18.5, serving: '28g (1 oz)', source: 'Local' },
-  { id: 42, name: 'Cashews', calories: 157, protein: 5.2, carbs: 8.6, fat: 12.4, serving: '28g (1 oz)', source: 'Local' },
-  { id: 43, name: 'Peanut Butter', calories: 188, protein: 8, carbs: 8, fat: 16, serving: '2 tbsp (32g)', source: 'Local' },
-  { id: 44, name: 'Chia Seeds', calories: 138, protein: 4.7, carbs: 12, fat: 8.7, serving: '28g (1 oz)', source: 'Local' },
-  { id: 45, name: 'Sunflower Seeds', calories: 165, protein: 5.8, carbs: 6.8, fat: 14, serving: '28g (1 oz)', source: 'Local' },
+  { id: 41, name: 'Walnuts', calories: 185, protein: 4.3, carbs: 3.9, fat: 18.5, serving: '28g (1 oz)', source: 'Local', brand: 'Generic' },
+  { id: 42, name: 'Cashews', calories: 157, protein: 5.2, carbs: 8.6, fat: 12.4, serving: '28g (1 oz)', source: 'Local', brand: 'Generic' },
+  { id: 43, name: 'Peanut Butter', calories: 188, protein: 8, carbs: 8, fat: 16, serving: '2 tbsp (32g)', source: 'Local', brand: 'Generic' },
+  { id: 44, name: 'Chia Seeds', calories: 138, protein: 4.7, carbs: 12, fat: 8.7, serving: '28g (1 oz)', source: 'Local', brand: 'Generic' },
+  { id: 45, name: 'Sunflower Seeds', calories: 165, protein: 5.8, carbs: 6.8, fat: 14, serving: '28g (1 oz)', source: 'Local', brand: 'Generic' },
 
 // Dairy
-  { id: 46, name: 'Milk (2%)', calories: 122, protein: 8, carbs: 12, fat: 4.8, serving: '1 cup (244g)', source: 'Local' },
-  { id: 47, name: 'Cheddar Cheese', calories: 113, protein: 7, carbs: 1, fat: 9, serving: '28g (1 oz)', source: 'Local' },
-  { id: 48, name: 'Mozzarella', calories: 85, protein: 6.3, carbs: 1, fat: 6.3, serving: '28g (1 oz)', source: 'Local' },
+  { id: 46, name: 'Milk (2%)', calories: 122, protein: 8, carbs: 12, fat: 4.8, serving: '1 cup (244g)', source: 'Local', brand: 'Generic' },
+  { id: 47, name: 'Cheddar Cheese', calories: 113, protein: 7, carbs: 1, fat: 9, serving: '28g (1 oz)', source: 'Local', brand: 'Generic' },
+  { id: 48, name: 'Mozzarella', calories: 85, protein: 6.3, carbs: 1, fat: 6.3, serving: '28g (1 oz)', source: 'Local', brand: 'Generic' },
 
 // Healthy Fats
-  { id: 49, name: 'Olive Oil', calories: 119, protein: 0, carbs: 0, fat: 13.5, serving: '1 tbsp (13.5g)', source: 'Local' },
-  { id: 50, name: 'Coconut Oil', calories: 117, protein: 0, carbs: 0, fat: 13.6, serving: '1 tbsp (13.6g)', source: 'Local' }
+  { id: 49, name: 'Olive Oil', calories: 119, protein: 0, carbs: 0, fat: 13.5, serving: '1 tbsp (13.5g)', source: 'Local', brand: 'Generic' },
+  { id: 50, name: 'Coconut Oil', calories: 117, protein: 0, carbs: 0, fat: 13.6, serving: '1 tbsp (13.6g)', source: 'Local', brand: 'Generic' }
 
 ];
 
@@ -556,6 +604,13 @@ export default function CalorieCounterPage() {
   const addFoodToMeal = () => {
     console.log('Adding food to meal:', selectedFood, 'Serving size:', servingSize, 'Meal type:', selectedMealType);
     setIsAddingFood(true);
+    
+    // Ensure selectedFood is not null
+    if (!selectedFood) {
+      console.error('No food selected');
+      setIsAddingFood(false);
+      return;
+    }
     
     // Helper function to calculate adjusted nutrient values
     const calculateAdjustedValue = (value: number | undefined) => {
@@ -700,10 +755,10 @@ export default function CalorieCounterPage() {
   const calculateDailyTotals = () => {
     const mealsForDate = getMealsForDate(selectedDate);
     return {
-      calories: mealsForDate.reduce((sum, meal) => sum + meal.totalCalories, 0),
-      protein: mealsForDate.reduce((sum, meal) => sum + meal.totalProtein, 0),
-      carbs: mealsForDate.reduce((sum, meal) => sum + meal.totalCarbs, 0),
-      fat: mealsForDate.reduce((sum, meal) => sum + meal.totalFat, 0)
+      calories: mealsForDate.reduce((sum, meal) => sum + (meal.totalCalories || 0), 0),
+      protein: mealsForDate.reduce((sum, meal) => sum + (meal.totalProtein || 0), 0),
+      carbs: mealsForDate.reduce((sum, meal) => sum + (meal.totalCarbs || 0), 0),
+      fat: mealsForDate.reduce((sum, meal) => sum + (meal.totalFat || 0), 0)
     };
   };
   
@@ -791,23 +846,23 @@ export default function CalorieCounterPage() {
   };
 
   // Calculate percentage of daily goals
-  const calculatePercentage = (value, goal) => {
+  const calculatePercentage = (value: number, goal: number): number => {
     return Math.min(Math.round((value / goal) * 100), 100);
   };
 
   // Get meals by type
-  const getMealsByType = (type) => {
+  const getMealsByType = (type: string): FoodItem[] => {
     return getMealsForDate(selectedDate).filter(meal => meal.mealType === type);
   };
 
   // Calculate totals for a specific meal type
-  const calculateMealTypeTotals = (type) => {
+  const calculateMealTypeTotals = (type: string): { calories: number; protein: number; carbs: number; fat: number } => {
     const mealsOfType = getMealsByType(type);
     return {
-      calories: mealsOfType.reduce((sum, meal) => sum + meal.totalCalories, 0),
-      protein: mealsOfType.reduce((sum, meal) => sum + meal.totalProtein, 0),
-      carbs: mealsOfType.reduce((sum, meal) => sum + meal.totalCarbs, 0),
-      fat: mealsOfType.reduce((sum, meal) => sum + meal.totalFat, 0)
+      calories: mealsOfType.reduce((sum, meal) => sum + (meal.totalCalories || 0), 0),
+      protein: mealsOfType.reduce((sum, meal) => sum + (meal.totalProtein || 0), 0),
+      carbs: mealsOfType.reduce((sum, meal) => sum + (meal.totalCarbs || 0), 0),
+      fat: mealsOfType.reduce((sum, meal) => sum + (meal.totalFat || 0), 0)
     };
   };
 
@@ -916,7 +971,7 @@ export default function CalorieCounterPage() {
                       {/* Search Results */}
                       {!isSearchLoading && allSearchResults.length > 0 && allSearchResults.map((food, index) => (
                         <div 
-                          key={`${food.source}-${food.id || food.fdcId}-${index}`}
+                          key={`${food.source}-${food.id || (food as any).fdcId || index}`}
                           className="p-3 hover:bg-dark cursor-pointer border-b border-gray-700 last:border-0"
                           onTouchStart={(e) => {
                             // For touch devices, prevent default to avoid issues
@@ -969,7 +1024,7 @@ export default function CalorieCounterPage() {
               </div>
               
               {/* Daily Summary */}
-              <div className="card p-6 sticky top-24 relative z-20">
+              <div className="card p-6 sticky top-24 z-20">
                 <h2 className="text-xl font-bold mb-4 flex items-center justify-between">
                   <div className="flex items-center">
                     <FiPieChart className="mr-2" />
@@ -1002,7 +1057,7 @@ export default function CalorieCounterPage() {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-text-secondary">Protein</span>
-                      <span className="font-medium">{dailyTotals.protein.toFixed(1)}g / {dailyGoals.protein}g</span>
+                      <span className="font-medium">{(dailyTotals.protein || 0).toFixed(1)}g / {dailyGoals.protein}g</span>
                     </div>
                     <div className="w-full bg-dark rounded-full h-2.5">
                       <div 
@@ -1016,7 +1071,7 @@ export default function CalorieCounterPage() {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-text-secondary">Carbs</span>
-                      <span className="font-medium">{dailyTotals.carbs.toFixed(1)}g / {dailyGoals.carbs}g</span>
+                      <span className="font-medium">{(dailyTotals.carbs || 0).toFixed(1)}g / {dailyGoals.carbs}g</span>
                     </div>
                     <div className="w-full bg-dark rounded-full h-2.5">
                       <div 
@@ -1030,7 +1085,7 @@ export default function CalorieCounterPage() {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-text-secondary">Fat</span>
-                      <span className="font-medium">{dailyTotals.fat.toFixed(1)}g / {dailyGoals.fat}g</span>
+                      <span className="font-medium">{(dailyTotals.fat || 0).toFixed(1)}g / {dailyGoals.fat}g</span>
                     </div>
                     <div className="w-full bg-dark rounded-full h-2.5">
                       <div 
@@ -1081,28 +1136,28 @@ export default function CalorieCounterPage() {
                           <h4 className="font-medium mb-2">Detailed Macronutrients</h4>
                           <div className="grid grid-cols-2 gap-2">
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Fiber:</span> {calculateDetailedNutritionTotals().fiber.toFixed(1)}g
+                              <span className="text-text-secondary">Fiber:</span> {(calculateDetailedNutritionTotals().fiber || 0).toFixed(1)}g
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Sugars:</span> {calculateDetailedNutritionTotals().sugars.toFixed(1)}g
+                              <span className="text-text-secondary">Sugars:</span> {(calculateDetailedNutritionTotals().sugars || 0).toFixed(1)}g
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Saturated Fat:</span> {calculateDetailedNutritionTotals().saturatedFat.toFixed(1)}g
+                              <span className="text-text-secondary">Saturated Fat:</span> {(calculateDetailedNutritionTotals().saturatedFat || 0).toFixed(1)}g
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Trans Fat:</span> {calculateDetailedNutritionTotals().transFat.toFixed(1)}g
+                              <span className="text-text-secondary">Trans Fat:</span> {(calculateDetailedNutritionTotals().transFat || 0).toFixed(1)}g
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Mono Fat:</span> {calculateDetailedNutritionTotals().monounsaturatedFat.toFixed(1)}g
+                              <span className="text-text-secondary">Mono Fat:</span> {(calculateDetailedNutritionTotals().monounsaturatedFat || 0).toFixed(1)}g
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Poly Fat:</span> {calculateDetailedNutritionTotals().polyunsaturatedFat.toFixed(1)}g
+                              <span className="text-text-secondary">Poly Fat:</span> {(calculateDetailedNutritionTotals().polyunsaturatedFat || 0).toFixed(1)}g
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Cholesterol:</span> {calculateDetailedNutritionTotals().cholesterol.toFixed(1)}mg
+                              <span className="text-text-secondary">Cholesterol:</span> {(calculateDetailedNutritionTotals().cholesterol || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Water:</span> {calculateDetailedNutritionTotals().water.toFixed(1)}g
+                              <span className="text-text-secondary">Water:</span> {(calculateDetailedNutritionTotals().water || 0).toFixed(1)}g
                             </div>
                           </div>
                         </div>
@@ -1112,40 +1167,40 @@ export default function CalorieCounterPage() {
                           <h4 className="font-medium mb-2">Vitamins</h4>
                           <div className="grid grid-cols-2 gap-2">
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin A:</span> {calculateDetailedNutritionTotals().vitaminA.toFixed(1)}μg
+                              <span className="text-text-secondary">Vitamin A:</span> {(calculateDetailedNutritionTotals().vitaminA || 0).toFixed(1)}μg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin C:</span> {calculateDetailedNutritionTotals().vitaminC.toFixed(1)}mg
+                              <span className="text-text-secondary">Vitamin C:</span> {(calculateDetailedNutritionTotals().vitaminC || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin D:</span> {calculateDetailedNutritionTotals().vitaminD.toFixed(1)}μg
+                              <span className="text-text-secondary">Vitamin D:</span> {(calculateDetailedNutritionTotals().vitaminD || 0).toFixed(1)}μg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin E:</span> {calculateDetailedNutritionTotals().vitaminE.toFixed(1)}mg
+                              <span className="text-text-secondary">Vitamin E:</span> {(calculateDetailedNutritionTotals().vitaminE || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin K:</span> {calculateDetailedNutritionTotals().vitaminK.toFixed(1)}μg
+                              <span className="text-text-secondary">Vitamin K:</span> {(calculateDetailedNutritionTotals().vitaminK || 0).toFixed(1)}μg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin B1:</span> {calculateDetailedNutritionTotals().vitaminB1.toFixed(1)}mg
+                              <span className="text-text-secondary">Vitamin B1:</span> {(calculateDetailedNutritionTotals().vitaminB1 || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin B2:</span> {calculateDetailedNutritionTotals().vitaminB2.toFixed(1)}mg
+                              <span className="text-text-secondary">Vitamin B2:</span> {(calculateDetailedNutritionTotals().vitaminB2 || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin B3:</span> {calculateDetailedNutritionTotals().vitaminB3.toFixed(1)}mg
+                              <span className="text-text-secondary">Vitamin B3:</span> {(calculateDetailedNutritionTotals().vitaminB3 || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin B5:</span> {calculateDetailedNutritionTotals().vitaminB5.toFixed(1)}mg
+                              <span className="text-text-secondary">Vitamin B5:</span> {(calculateDetailedNutritionTotals().vitaminB5 || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin B6:</span> {calculateDetailedNutritionTotals().vitaminB6.toFixed(1)}mg
+                              <span className="text-text-secondary">Vitamin B6:</span> {(calculateDetailedNutritionTotals().vitaminB6 || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin B9:</span> {calculateDetailedNutritionTotals().vitaminB9.toFixed(1)}μg
+                              <span className="text-text-secondary">Vitamin B9:</span> {(calculateDetailedNutritionTotals().vitaminB9 || 0).toFixed(1)}μg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Vitamin B12:</span> {calculateDetailedNutritionTotals().vitaminB12.toFixed(1)}μg
+                              <span className="text-text-secondary">Vitamin B12:</span> {(calculateDetailedNutritionTotals().vitaminB12 || 0).toFixed(1)}μg
                             </div>
                           </div>
                         </div>
@@ -1155,34 +1210,34 @@ export default function CalorieCounterPage() {
                           <h4 className="font-medium mb-2">Minerals</h4>
                           <div className="grid grid-cols-2 gap-2">
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Calcium:</span> {calculateDetailedNutritionTotals().calcium.toFixed(1)}mg
+                              <span className="text-text-secondary">Calcium:</span> {(calculateDetailedNutritionTotals().calcium || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Iron:</span> {calculateDetailedNutritionTotals().iron.toFixed(1)}mg
+                              <span className="text-text-secondary">Iron:</span> {(calculateDetailedNutritionTotals().iron || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Magnesium:</span> {calculateDetailedNutritionTotals().magnesium.toFixed(1)}mg
+                              <span className="text-text-secondary">Magnesium:</span> {(calculateDetailedNutritionTotals().magnesium || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Phosphorus:</span> {calculateDetailedNutritionTotals().phosphorus.toFixed(1)}mg
+                              <span className="text-text-secondary">Phosphorus:</span> {(calculateDetailedNutritionTotals().phosphorus || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Potassium:</span> {calculateDetailedNutritionTotals().potassium.toFixed(1)}mg
+                              <span className="text-text-secondary">Potassium:</span> {(calculateDetailedNutritionTotals().potassium || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Sodium:</span> {calculateDetailedNutritionTotals().sodium.toFixed(1)}mg
+                              <span className="text-text-secondary">Sodium:</span> {(calculateDetailedNutritionTotals().sodium || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Zinc:</span> {calculateDetailedNutritionTotals().zinc.toFixed(1)}mg
+                              <span className="text-text-secondary">Zinc:</span> {(calculateDetailedNutritionTotals().zinc || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Copper:</span> {calculateDetailedNutritionTotals().copper.toFixed(1)}mg
+                              <span className="text-text-secondary">Copper:</span> {(calculateDetailedNutritionTotals().copper || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Manganese:</span> {calculateDetailedNutritionTotals().manganese.toFixed(1)}mg
+                              <span className="text-text-secondary">Manganese:</span> {(calculateDetailedNutritionTotals().manganese || 0).toFixed(1)}mg
                             </div>
                             <div className="bg-dark p-2 rounded">
-                              <span className="text-text-secondary">Selenium:</span> {calculateDetailedNutritionTotals().selenium.toFixed(1)}μg
+                              <span className="text-text-secondary">Selenium:</span> {(calculateDetailedNutritionTotals().selenium || 0).toFixed(1)}μg
                             </div>
                           </div>
                         </div>
@@ -1249,9 +1304,9 @@ export default function CalorieCounterPage() {
                                     <div>{food.servingSize} {food.servingUnit}</div>
                                   </td>
                                   <td className="text-center py-2">{food.totalCalories}</td>
-                                  <td className="text-center py-2">{food.totalProtein.toFixed(1)}g</td>
-                                  <td className="text-center py-2">{food.totalCarbs.toFixed(1)}g</td>
-                                  <td className="text-center py-2">{food.totalFat.toFixed(1)}g</td>
+                                  <td className="text-center py-2">{(food.totalProtein || 0).toFixed(1)}g</td>
+                                  <td className="text-center py-2">{(food.totalCarbs || 0).toFixed(1)}g</td>
+                                  <td className="text-center py-2">{(food.totalFat || 0).toFixed(1)}g</td>
                                   <td className="text-center py-2">
                                     <button 
                                       className="text-red-400 hover:text-red-300 transition-colors"
@@ -1266,9 +1321,9 @@ export default function CalorieCounterPage() {
                                 <td className="py-2 font-bold">Total</td>
                                 <td className="text-center py-2"></td>
                                 <td className="text-center py-2 font-bold">{mealTotals.calories}</td>
-                                <td className="text-center py-2 font-bold">{mealTotals.protein.toFixed(1)}g</td>
-                                <td className="text-center py-2 font-bold">{mealTotals.carbs.toFixed(1)}g</td>
-                                <td className="text-center py-2 font-bold">{mealTotals.fat.toFixed(1)}g</td>
+                                <td className="text-center py-2 font-bold">{(mealTotals.protein || 0).toFixed(1)}g</td>
+                                  <td className="text-center py-2 font-bold">{(mealTotals.carbs || 0).toFixed(1)}g</td>
+                                  <td className="text-center py-2 font-bold">{(mealTotals.fat || 0).toFixed(1)}g</td>
                                 <td className="text-center py-2"></td>
                               </tr>
                             </tbody>
@@ -1663,16 +1718,20 @@ export default function CalorieCounterPage() {
                                   </div>
                                   <div className="grid grid-cols-4 gap-2">
                                     {selectedFood.aminoAcids ? (
-                                      Object.entries(selectedFood.aminoAcids).map(([name, value]) => (
-                                        <React.Fragment key={name}>
-                                          <div className="bg-dark p-2 rounded col-span-2">
-                                            <span className="text-text-secondary">{name}:</span> {value}g
-                                          </div>
-                                          <div className="bg-dark p-2 rounded col-span-2">
-                                            <span className="text-text-secondary">{name}:</span> {(value * servingSize).toFixed(2)}g
-                                          </div>
-                                        </React.Fragment>
-                                      ))
+                                      Object.entries(selectedFood.aminoAcids).map(([name, value]) => {
+                                        const safeValue = typeof value === 'number' ? value : 0;
+                                        const adjustedValue = (safeValue * servingSize).toFixed(2);
+                                        return (
+                                          <React.Fragment key={name}>
+                                            <div className="bg-dark p-2 rounded col-span-2">
+                                              <span className="text-text-secondary">{name}</span>{': '}{safeValue}g
+                                            </div>
+                                            <div className="bg-dark p-2 rounded col-span-2">
+                                              <span className="text-text-secondary">{name}</span>{': '}{adjustedValue}g
+                                            </div>
+                                          </React.Fragment>
+                                        );
+                                      })
                                     ) : (
                                       <div className="col-span-4 text-text-secondary">No amino acid data available</div>
                                     )}
@@ -1687,16 +1746,20 @@ export default function CalorieCounterPage() {
                                   </div>
                                   <div className="grid grid-cols-4 gap-2">
                                     {selectedFood.fattyAcids ? (
-                                      Object.entries(selectedFood.fattyAcids).map(([name, value]) => (
-                                        <React.Fragment key={name}>
-                                          <div className="bg-dark p-2 rounded col-span-2">
-                                            <span className="text-text-secondary">{name}:</span> {value}g
-                                          </div>
-                                          <div className="bg-dark p-2 rounded col-span-2">
-                                            <span className="text-text-secondary">{name}:</span> {(value * servingSize).toFixed(2)}g
-                                          </div>
-                                        </React.Fragment>
-                                      ))
+                                      Object.entries(selectedFood.fattyAcids).map(([name, value]) => {
+                                        const safeValue = typeof value === 'number' ? value : 0;
+                                        const adjustedValue = (safeValue * servingSize).toFixed(2);
+                                        return (
+                                          <React.Fragment key={name}>
+                                            <div className="bg-dark p-2 rounded col-span-2">
+                                              <span className="text-text-secondary">{name}</span>{': '}{safeValue}g
+                                            </div>
+                                            <div className="bg-dark p-2 rounded col-span-2">
+                                              <span className="text-text-secondary">{name}</span>{': '}{adjustedValue}g
+                                            </div>
+                                          </React.Fragment>
+                                        );
+                                      })
                                     ) : (
                                       <div className="col-span-4 text-text-secondary">No fatty acid data available</div>
                                     )}
