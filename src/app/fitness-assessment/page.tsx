@@ -24,7 +24,40 @@ export default function FitnessAssessment() {
   })
 
   // Results state
-  const [results, setResults] = useState({
+  type Results = {
+    bmi: number;
+    bodyFat: number;
+    bmr: number;
+    tdee: number;
+    healthCategory: string;
+    calorieRecommendations: {
+      weightLoss: {
+        conservative: number;
+        moderate: number;
+        aggressive: number;
+      };
+      muscleGain: {
+        lean: number;
+        moderate: number;
+        aggressive: number;
+      };
+      maintenance: number;
+    };
+    waterIntake: number;
+    proteinNeeds: {
+      min: number;
+      max: number;
+    };
+    macroRatios: {
+      weightLoss: { protein: string; carbs: string; fats: string; };
+      muscleGain: { protein: string; carbs: string; fats: string; };
+      maintenance: { protein: string; carbs: string; fats: string; };
+      endurance: { protein: string; carbs: string; fats: string; };
+    };
+    recommendations: string[];
+  };
+  
+  const [results, setResults] = useState<Results>({
     bmi: 0,
     bodyFat: 0,
     bmr: 0,
@@ -54,7 +87,7 @@ export default function FitnessAssessment() {
       maintenance: { protein: '15-25%', carbs: '45-55%', fats: '25-35%' },
       endurance: { protein: '15-20%', carbs: '55-65%', fats: '20-25%' }
     },
-    recommendations: []
+    recommendations: [] as string[]
   })
 
   // Show results state

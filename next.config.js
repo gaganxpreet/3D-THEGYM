@@ -49,5 +49,6 @@ const nextConfig = {
     optimizeCss: true,
     scrollRestoration: true,
   },
+};
 
 module.exports = withBundleAnalyzer(nextConfig);
