@@ -1,0 +1,46 @@
+import { NextResponse } from 'next/server';
+
+/**
+ * Middleware function to add security headers to all responses
+ * Includes a Content Security Policy that allows WebGL while maintaining security
+ * 
+ * @param {Object} request - The incoming request object
+ * @returns {Object} - The modified response
+ */
+export function middleware(request) {
+  const response = NextResponse.next();
+  
+  // Add security headers
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob: https://randomuser.me https://images.unsplash.com;
+    font-src 'self' data:;
+    connect-src 'self' https:;
+    media-src 'self';
+    worker-src 'self' blob:;
+    child-src 'none';
+    object-src 'none';
+    form-action 'self';
+  `.replace(/\s{2,}/g, ' ').trim();
+  
+  // Add security headers
+  response.headers.set('Content-Security-Policy', cspHeader);
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  
+  // Add performance and caching headers
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()'); 
+  
+  return response;
+}
+
+/**
+ * Configuration for which routes the middleware applies to
+ * Excludes static assets, API routes, and Next.js internals
+ */
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};
